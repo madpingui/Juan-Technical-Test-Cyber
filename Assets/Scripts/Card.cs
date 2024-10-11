@@ -114,5 +114,8 @@ public class Card : MonoBehaviour
 
         transform.localScale = initialScale; // Ensure the card returns to its original scale
     }
+
+    public bool IsFlipped() => isFlipped;
+    public bool IsMatched() => isMatched;
 }
 

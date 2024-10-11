@@ -4,23 +4,45 @@ using UnityEngine.UI;
 using UnityEngine.Assertions;
 using System;
 
+[Serializable]
+public enum GameDifficulty
+{
+    Easy,
+    Medium,
+    Hard
+}
+
 public class GameController : MonoBehaviour
 {
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private GridLayoutGroup cardGrid;
+    [SerializeField] private List<CardGameConfig> gameConfigs;
 
     private List<Card> flippedCards = new List<Card>();
     private List<Card> allCards = new List<Card>();
+    private GameDifficulty chosenDifficulty;
 
-    public event Action OnMatchEvent;
-    public event Action OnMissEvent;
+    public event Action OnMatchStarted;
+    public event Action OnCardMatch;
+    public event Action OnCardMiss;
 
-    public void PlayGame(CardGameConfig gameConfig)
+    public void PlayGame(GameDifficulty difficulty)
     {
+        foreach (Transform item in cardGrid.transform)
+        {
+            Destroy(item.gameObject);
+        }
+
+        allCards.Clear();
+        flippedCards.Clear();
+
+        chosenDifficulty = difficulty;
+        var gameConfig = gameConfigs[(int)chosenDifficulty];
         CreateCardGrid(gameConfig.rows, gameConfig.columns, gameConfig.cardFrontSprites);
+        OnMatchStarted?.Invoke();
     }
 
-    private void CreateCardGrid(int rows, int columns, Sprite[] cardFrontSprites)
+    private void CreateCardGrid(int rows, int columns, Sprite[] cardFrontSprites, List<int> cardIds = null)
     {
         #region Pre-Conditions
         // Check if rows * columns is even
@@ -37,7 +59,7 @@ public class GameController : MonoBehaviour
             $"Not enough cardFrontSprites! Required: {uniqueCardCount}, Available: {cardFrontSprites.Length}");
         #endregion
 
-        List<int> cardIds = GenerateCardIds(rows, columns);
+        cardIds ??= GenerateCardIds(rows, columns);
         cardGrid.constraintCount = columns;
 
         for (int i = 0; i < rows * columns; i++)
@@ -86,7 +108,7 @@ public class GameController : MonoBehaviour
             flippedCards[0].SetMatched();
             flippedCards[1].SetMatched();
 
-            OnMatchEvent?.Invoke();
+            OnCardMatch?.Invoke();
 
             //play match sound
         }
@@ -95,12 +117,75 @@ public class GameController : MonoBehaviour
             flippedCards[0].ResetCard();
             flippedCards[1].ResetCard();
 
-            OnMissEvent?.Invoke();
+            OnCardMiss?.Invoke();
 
             // Play mismatch sound
         }
 
         flippedCards.Clear();
     }
+
+    public GameData GetGameData(int score, int combo)
+    {
+        GameData gameData = new GameData
+        {
+            score = score,
+            combo = combo,
+            chosenDifficulty = (int)this.chosenDifficulty,
+            cardStates = new List<CardData>()
+        };
+
+        foreach (Card card in allCards)
+        {
+            CardData cardData = new CardData
+            {
+                id = card.Id,
+                isFlipped = card.IsFlipped(),
+                isMatched = card.IsMatched()
+            };
+            gameData.cardStates.Add(cardData);
+        }
+
+        return gameData;
+    }
+
+    public void LoadGameData(GameData data)
+    {
+        foreach (Transform item in cardGrid.transform)
+        {
+            Destroy(item.gameObject);
+        }
+
+        allCards.Clear();
+        flippedCards.Clear();
+
+        var gameConfig = gameConfigs[(int)data.chosenDifficulty];
+        cardGrid.constraintCount = gameConfig.columns;
+
+        var cardSprites = gameConfig.cardFrontSprites;
+
+        foreach (var cardData in data.cardStates)
+        {
+            GameObject newCardObj = Instantiate(cardPrefab, cardGrid.transform);
+            Card newCard = newCardObj.GetComponent<Card>();
+            allCards.Add(newCard);
+
+            newCard.Initialize(cardData.id, cardSprites[cardData.id]);
+
+            if (cardData.isFlipped)
+            {
+                newCard.Flip(); // Flip the card to its front
+            }
+
+            if (cardData.isMatched)
+            {
+                newCard.SetMatched(); // Mark it as matched
+            }
+
+            newCard.CardFlipped += OnCardFlipped;
+        }
+    }
+
+
 }
 

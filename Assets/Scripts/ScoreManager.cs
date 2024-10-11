@@ -10,16 +10,26 @@ public class ScoreManager : MonoBehaviour
     private int score = 0;
     private int combo = 0;
 
-    private void OnEnable()
+    private void Start()
     {
-        gameController.OnMatchEvent += OnMatch;
-        gameController.OnMissEvent += OnMiss;
+        gameController.OnCardMatch += OnMatch;
+        gameController.OnCardMiss += OnMiss;
+        gameController.OnMatchStarted += ResetScores;
     }
 
     private void OnDisable()
     {
-        gameController.OnMatchEvent -= OnMatch;
-        gameController.OnMissEvent -= OnMiss;
+        gameController.OnCardMatch -= OnMatch;
+        gameController.OnCardMiss -= OnMiss;
+        gameController.OnMatchStarted -= ResetScores;
+    }
+
+    private void ResetScores()
+    {
+        score = 0;
+        combo = 0;
+        SetScore(score);
+        SetCombo(combo);
     }
 
     private void OnMatch()
@@ -36,7 +46,9 @@ public class ScoreManager : MonoBehaviour
         SetCombo(combo);
     }
 
-    private void SetScore(int score) => scoreText.text = $"Score: {score}";
-    private void SetCombo(int combo) => comboText.text = $"Combo x{combo}";
+    public void SetScore(int score) => scoreText.text = $"Score: {score}";
+    public void SetCombo(int combo) => comboText.text = $"Combo x{combo}";
+    public int GetScore() => score;
+    public int GetCombo() => combo;
 }
 

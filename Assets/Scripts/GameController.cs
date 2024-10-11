@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Assertions;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class GameController : MonoBehaviour
 
     private List<Card> flippedCards = new List<Card>();
     private List<Card> allCards = new List<Card>();
+
+    public event Action OnMatchEvent;
+    public event Action OnMissEvent;
 
     public void PlayGame(CardGameConfig gameConfig)
     {
@@ -81,13 +85,18 @@ public class GameController : MonoBehaviour
         {
             flippedCards[0].SetMatched();
             flippedCards[1].SetMatched();
-            // Update score, play match sound
-            // Add score
+
+            OnMatchEvent?.Invoke();
+
+            //play match sound
         }
         else
         {
             flippedCards[0].ResetCard();
             flippedCards[1].ResetCard();
+
+            OnMissEvent?.Invoke();
+
             // Play mismatch sound
         }
 

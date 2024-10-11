@@ -11,7 +11,10 @@ public class GameController : MonoBehaviour
     private List<Card> flippedCards = new List<Card>();
     private List<Card> allCards = new List<Card>();
 
-    public void PlayGame(CardGameConfig gameConfig) => CreateCardGrid(gameConfig.rows, gameConfig.columns, gameConfig.cardFrontSprites);
+    public void PlayGame(CardGameConfig gameConfig)
+    {
+        CreateCardGrid(gameConfig.rows, gameConfig.columns, gameConfig.cardFrontSprites);
+    }
 
     private void CreateCardGrid(int rows, int columns, Sprite[] cardFrontSprites)
     {

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e7849ea0504ce74483799a369ef27e5, type: 3}
   m_Name: Hard
   m_EditorClassIdentifier: 
-  rows: 6
-  columns: 7
+  rows: 5
+  columns: 6
   cardFrontSprites:
   - {fileID: -4636115958458729934, guid: 55b1b7c646982a049b43cadc6fe191fa, type: 3}
   - {fileID: -6009198046271197863, guid: 416d7ad4879a2ec4c99603e9260521e1, type: 3}
@@ -30,9 +30,3 @@ MonoBehaviour:
   - {fileID: 4443029923271295114, guid: 6732a03145e8bd0408862257da102895, type: 3}
   - {fileID: 8796267687936727094, guid: cecd9cbf00a9099418ce8a1653a82c7f, type: 3}
   - {fileID: -7966776921622821435, guid: 1dbf5dede7c691641bc771e42b2de99b, type: 3}
-  - {fileID: -2205863333093305225, guid: 7f080337138fccf41983b1dfefed52f6, type: 3}
-  - {fileID: 2912147235762990277, guid: 60543be98b18e94439b2e2a67aae367f, type: 3}
-  - {fileID: -7213742777133032008, guid: 0e97f32679693fb42816be9a80e0254b, type: 3}
-  - {fileID: -190263856022079292, guid: 0147758256f443c4aabf6e3f2478115a, type: 3}
-  - {fileID: -4080278737599844964, guid: fdd7c39b6deb3f840b5fc0e9cbc6cb00, type: 3}
-  - {fileID: -4007279082606720751, guid: b0f85d5a744f799449233745652b567a, type: 3}

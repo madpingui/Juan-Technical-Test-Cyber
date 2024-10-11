@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Medium
   m_EditorClassIdentifier: 
   rows: 4
-  columns: 5
+  columns: 4
   cardFrontSprites:
   - {fileID: -4636115958458729934, guid: 55b1b7c646982a049b43cadc6fe191fa, type: 3}
   - {fileID: -6009198046271197863, guid: 416d7ad4879a2ec4c99603e9260521e1, type: 3}
@@ -23,5 +23,3 @@ MonoBehaviour:
   - {fileID: 4727633781103762509, guid: 45ab094653c66ba40a2ca337adf32ff4, type: 3}
   - {fileID: -4592095305834777055, guid: a5e15db1384d7b54a9485ae4b9c22cef, type: 3}
   - {fileID: -6415649246072548017, guid: 27834320931067c4b9127246cba948d2, type: 3}
-  - {fileID: 4214149858688995037, guid: 4879c28807ad63542b6f1c0842b574b2, type: 3}
-  - {fileID: 5248415023898783801, guid: cbf58c37249d82a4e97598dfc07d9058, type: 3}

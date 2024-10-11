@@ -1,32 +1,41 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Assertions;
 
 public class GameController : MonoBehaviour
 {
     [SerializeField] private GameObject cardPrefab;
-    [SerializeField] private GridLayoutGroup cardLayout;
-    [SerializeField] private int rows = 2, columns = 2; // default 2x2 layout
-    [SerializeField] private Sprite[] cardFrontSprites;
+    [SerializeField] private GridLayoutGroup cardGrid;
 
     private List<Card> flippedCards = new List<Card>();
     private List<Card> allCards = new List<Card>();
-    private bool canFlip = true;
 
-    private void Start()
-    {
-        CreateCardGrid(rows, columns);
-    }
+    public void PlayGame(CardGameConfig gameConfig) => CreateCardGrid(gameConfig.rows, gameConfig.columns, gameConfig.cardFrontSprites);
 
-    private void CreateCardGrid(int rows, int columns)
+    private void CreateCardGrid(int rows, int columns, Sprite[] cardFrontSprites)
     {
+        #region Pre-Conditions
+        // Check if rows * columns is even
+        int totalCards = rows * columns;
+        if (totalCards % 2 != 0)
+        {
+            Debug.LogError("The total number of cards must be even to ensure all cards have a pair.");
+            return; // Exit early if the number of cards is odd
+        }
+
+        // Assert that there are enough sprites for the number of unique card IDs
+        int uniqueCardCount = (rows * columns) / 2; // Each card ID will have a pair
+        Assert.IsTrue(cardFrontSprites.Length >= uniqueCardCount,
+            $"Not enough cardFrontSprites! Required: {uniqueCardCount}, Available: {cardFrontSprites.Length}");
+        #endregion
+
         List<int> cardIds = GenerateCardIds(rows, columns);
-        cardLayout.constraintCount = columns;
+        cardGrid.constraintCount = columns;
 
         for (int i = 0; i < rows * columns; i++)
         {
-            GameObject newCardObj = Instantiate(cardPrefab, cardLayout.transform);
+            GameObject newCardObj = Instantiate(cardPrefab, cardGrid.transform);
             Card newCard = newCardObj.GetComponent<Card>();
             allCards.Add(newCard);
 
@@ -47,43 +56,39 @@ public class GameController : MonoBehaviour
             ids.Add(i); // pair 2
         }
 
-        //ids.Shuffle(); // Utility method to randomize order
+        ids.Shuffle(); // Utility method to randomize order
         return ids;
     }
 
     private void OnCardFlipped(Card card)
     {
-        if (!canFlip || flippedCards.Contains(card)) return;
+        if (flippedCards.Contains(card)) return;
 
         flippedCards.Add(card);
 
         if (flippedCards.Count == 2)
         {
-            StartCoroutine(CheckMatch());
+            CheckMatch();
         }
     }
 
-    private IEnumerator CheckMatch()
+    private void CheckMatch()
     {
-        canFlip = false;
-        yield return new WaitForSeconds(1f); // delay for card comparison
-
         if (flippedCards[0].Id == flippedCards[1].Id)
         {
             flippedCards[0].SetMatched();
             flippedCards[1].SetMatched();
             // Update score, play match sound
-            //ScoreManager.Instance.AddScore();
+            // Add score
         }
         else
         {
-            flippedCards[0].Flip();
-            flippedCards[1].Flip();
+            flippedCards[0].ResetCard();
+            flippedCards[1].ResetCard();
             // Play mismatch sound
         }
 
         flippedCards.Clear();
-        canFlip = true;
     }
 }
 

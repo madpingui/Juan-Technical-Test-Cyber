@@ -17,5 +17,29 @@ public static class ListExtensions
             list[n] = value;
         }
     }
+
+    /// <summary>
+    /// Generates a list of paired IDs based on the given total number of items and shuffles the list.
+    /// </summary>
+    /// <param name="list">The list to populate with generated IDs.</param>
+    /// <param name="totalItems">The total number of items to generate IDs for (must be an even number).</param>
+    public static List<int> GenerateAndShuffleIds(this List<int> list, int totalItems)
+    {
+        if (totalItems % 2 != 0)
+        {
+            throw new ArgumentException("Total items must be an even number to ensure pairs.");
+        }
+
+        int pairs = totalItems / 2;
+
+        for (int i = 0; i < pairs; i++)
+        {
+            list.Add(i); // pair 1
+            list.Add(i); // pair 2
+        }
+
+        list.Shuffle();
+        return list;
+    }
 }
 

@@ -203,7 +203,7 @@ MonoBehaviour:
       - m_Target: {fileID: 3965775801190478967}
         m_TargetAssemblyTypeName: Card, Assembly-CSharp
         m_MethodName: FlipUpCard
-        m_Mode: 1
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

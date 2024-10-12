@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Assertions;
 using System;
 using System.Linq;
+using System.Collections;
 
 public class GameController : MonoBehaviour
 {
@@ -23,24 +24,16 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        PlayButton.OnPlayButtonClicked += StartNewGame;
-
         // Initialize the dictionary from the list of pairs
-        difficultyConfigs = new Dictionary<GameDifficulty, CardGameConfig>();
-
-        foreach (var pair in difficultyConfigPairs)
-        {
-            if (!difficultyConfigs.ContainsKey(pair.difficulty))
-            {
-                difficultyConfigs.Add(pair.difficulty, pair.config);
-            }
-        }
+        difficultyConfigs = difficultyConfigPairs.ToDictionary(pair => pair.difficulty, pair => pair.config);       
+        PlayButton.OnPlayButtonClicked += StartNewGame;
     }
 
     private void StartNewGame(GameDifficulty difficulty)
     {
         ClearExistingCards();
-        SetupNewGame(difficulty);
+        chosenDifficulty = difficulty;
+        SetupNewGame(difficultyConfigs[chosenDifficulty]);
         OnMatchStarted?.Invoke();
     }
 
@@ -54,34 +47,33 @@ public class GameController : MonoBehaviour
         currentMatchCheck.Clear();
     }
 
-    private void SetupNewGame(GameDifficulty difficulty)
+    private void SetupNewGame(CardGameConfig config)
     {
-        chosenDifficulty = difficulty;
-        var gameConfig = difficultyConfigs[chosenDifficulty];
-        CreateCardGrid(gameConfig.rows, gameConfig.columns, gameConfig.cardFrontSprites);
+        CreateCardGrid(config.rows, config.columns, config.cardFrontSprites);
     }
 
-    private void CreateCardGrid(int rows, int columns, Sprite[] cardFrontSprites, List<int> cardIds = null)
+    private void CreateCardGrid(int rows, int columns, Sprite[] cardFrontSprites)
     {
-        #region Pre-Conditions
-        // Check if rows * columns is even
         int totalCards = rows * columns;
         if (totalCards % 2 != 0)
         {
-            Debug.LogError("The total number of cards must be even to ensure all cards have a pair.");
-            return; // Exit early if the number of cards is odd
+            Debug.LogError("Total cards must be even for pairs.");
+            return;
         }
 
-        // Assert that there are enough sprites for the number of unique card IDs
-        int uniqueCardCount = (rows * columns) / 2; // Each card ID will have a pair
+        int uniqueCardCount = totalCards / 2;
         Assert.IsTrue(cardFrontSprites.Length >= uniqueCardCount,
-            $"Not enough cardFrontSprites! Required: {uniqueCardCount}, Available: {cardFrontSprites.Length}");
-        #endregion
+            $"Insufficient card sprites. Needed: {uniqueCardCount}, Available: {cardFrontSprites.Length}");
 
-        cardIds ??= GenerateCardIds(rows, columns);
         cardGrid.constraintCount = columns;
+        List<int> cardIds = new List<int>();
+        cardIds.GenerateAndShuffleIds(totalCards);
+        InstantiateCards(cardIds, cardFrontSprites);
+    }
 
-        for (int i = 0; i < rows * columns; i++)
+    private void InstantiateCards(List<int> cardIds, Sprite[] cardFrontSprites)
+    {
+        for (int i = 0; i < cardIds.Count; i++)
         {
             GameObject newCardObj = Instantiate(cardPrefab, cardGrid.transform);
             Card newCard = newCardObj.GetComponent<Card>();
@@ -91,21 +83,14 @@ public class GameController : MonoBehaviour
             newCard.Initialize(id, cardFrontSprites[id]);
             newCard.CardFlipped += OnCardFlipped;
         }
+        StartCoroutine(ShowCardsTemporarily());
     }
 
-    private List<int> GenerateCardIds(int rows, int columns)
+    private IEnumerator ShowCardsTemporarily()
     {
-        List<int> ids = new List<int>();
-        int pairs = (rows * columns) / 2;
-
-        for (int i = 0; i < pairs; i++)
-        {
-            ids.Add(i); // pair 1
-            ids.Add(i); // pair 2
-        }
-
-        ids.Shuffle(); // Utility method to randomize order
-        return ids;
+        allCards.ForEach(card => card.FlipUpCard(true));
+        yield return new WaitForSeconds(2f);
+        allCards.ForEach(card => card.FlipDownCard());
     }
 
     private void OnCardFlipped(Card card)
@@ -122,84 +107,85 @@ public class GameController : MonoBehaviour
 
     private void CheckMatch()
     {
-        if (currentMatchCheck[0].Id == currentMatchCheck[1].Id)
-        {
-            currentMatchCheck[0].SetMatched();
-            currentMatchCheck[1].SetMatched();
+        bool isMatch = currentMatchCheck[0].Id == currentMatchCheck[1].Id;
 
-            OnCardMatch?.Invoke();
-
-            //Check if all cards are matched
-            if(allCards.All(card => card.IsMatched()))
-                OnMatchFinished?.Invoke();
-
-            //play match sound
-        }
-        else
-        {
-            currentMatchCheck[0].FlipDownCard();
-            currentMatchCheck[1].FlipDownCard();
-
-            OnCardMiss?.Invoke();
-
-            // Play mismatch sound
-        }
+        if (isMatch) HandleMatch();
+        else         HandleMismatch();
 
         currentMatchCheck.Clear();
     }
 
+    private void HandleMatch()
+    {
+        foreach (var card in currentMatchCheck)
+        {
+            card.SetMatched();
+        }
+
+        OnCardMatch?.Invoke();
+
+        if (allCards.All(card => card.IsMatched()))
+        {
+            OnMatchFinished?.Invoke();
+        }
+    }
+
+    private void HandleMismatch()
+    {
+        foreach (var card in currentMatchCheck)
+        {
+            card.FlipDownCard();
+        }
+
+        OnCardMiss?.Invoke();
+    }
+
     public GameData GetGameData(int score, int combo)
     {
-        GameData gameData = new GameData
+        return new GameData
         {
             score = score,
             combo = combo,
-            chosenDifficulty = (int)this.chosenDifficulty,
-            cardStates = new List<CardData>()
-        };
-
-        foreach (Card card in allCards)
-        {
-            CardData cardData = new CardData
+            chosenDifficulty = (int)chosenDifficulty,
+            cardStates = allCards.Select(card => new CardData
             {
                 id = card.Id,
                 isFlipped = card.IsFlipped(),
                 isMatched = card.IsMatched()
-            };
-            gameData.cardStates.Add(cardData);
-        }
-
-        return gameData;
+            }).ToList()
+        };
     }
 
     public void LoadGameData(GameData data)
     {
         ClearExistingCards();
-
         var gameConfig = difficultyConfigs[(GameDifficulty)data.chosenDifficulty];
-        cardGrid.constraintCount = gameConfig.columns;
+        CreateCardGrid(gameConfig.rows, gameConfig.columns, gameConfig.cardFrontSprites, data.cardStates);
+    }
 
-        var cardSprites = gameConfig.cardFrontSprites;
+    private void CreateCardGrid(int rows, int columns, Sprite[] cardFrontSprites, List<CardData> cardDataList)
+    {
+        cardGrid.constraintCount = columns;
 
-        foreach (var cardData in data.cardStates)
+        for (int i = 0; i < cardDataList.Count; i++)
         {
             GameObject newCardObj = Instantiate(cardPrefab, cardGrid.transform);
             Card newCard = newCardObj.GetComponent<Card>();
             allCards.Add(newCard);
 
-            newCard.Initialize(cardData.id, cardSprites[cardData.id]);
+            var cardData = cardDataList[i];
+            newCard.Initialize(cardData.id, cardFrontSprites[cardData.id]);
 
             if (cardData.isMatched)
             {
-                newCard.SetMatched(); // Mark it as matched
+                newCard.SetMatched();
             }
             else if (cardData.isFlipped)
             {
-                newCard.FlipUpCard(); // Pass false to avoid triggering the event
+                newCard.FlipUpCard();
             }
 
             newCard.CardFlipped += OnCardFlipped;
         }
     }
 }
-

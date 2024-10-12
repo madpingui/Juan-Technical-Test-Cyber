@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FlipAnimator : MonoBehaviour
+public class CardFlipAnimator : MonoBehaviour
 {
     [SerializeField] private Sprite frontSprite;
     [SerializeField] private Sprite backSprite;

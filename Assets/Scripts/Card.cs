@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(FlipAnimator))]
+[RequireComponent(typeof(CardFlipAnimator))]
 public class Card : MonoBehaviour
 {
-    [SerializeField] private FlipAnimator flipAnimator;
+    [SerializeField] private CardFlipAnimator flipAnimator;
 
     private bool isFlipped = false;
     private bool isMatched = false;
@@ -18,10 +18,10 @@ public class Card : MonoBehaviour
         flipAnimator.SetSprite(figure);
     }
 
-    public void FlipUpCard()
+    public void FlipUpCard(bool triggerEvent = true)
     {
         if (isMatched || isFlipped) return;
-        flipAnimator.PlayFlip(false, () => CardFlipped?.Invoke(this));
+        flipAnimator.PlayFlip(false, triggerEvent ? () => CardFlipped?.Invoke(this) : null);
         isFlipped = true;
     }
 

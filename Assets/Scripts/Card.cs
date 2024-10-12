@@ -10,7 +10,7 @@ public class Card : MonoBehaviour
     private bool isMatched = false;
 
     public int Id { get; private set; }
-    public event Action<Card> CardFlipped;
+    public event Action<Card> OnCardFlipped;
 
     public void Initialize(int id, Sprite figure)
     {
@@ -21,8 +21,9 @@ public class Card : MonoBehaviour
     public void FlipUpCard(bool triggerEvent = true)
     {
         if (isMatched || isFlipped) return;
-        flipAnimator.PlayFlip(false, triggerEvent ? () => CardFlipped?.Invoke(this) : null);
+        flipAnimator.PlayFlip(false, triggerEvent ? () => OnCardFlipped?.Invoke(this) : null);
         isFlipped = true;
+        SoundManager.Instance.PlayCardFlip();
     }
 
     public void FlipDownCard()

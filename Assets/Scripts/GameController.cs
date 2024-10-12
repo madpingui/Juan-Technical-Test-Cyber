@@ -81,14 +81,14 @@ public class GameController : MonoBehaviour
 
             int id = cardIds[i];
             newCard.Initialize(id, cardFrontSprites[id]);
-            newCard.CardFlipped += OnCardFlipped;
+            newCard.OnCardFlipped += OnCardFlipped;
         }
         StartCoroutine(ShowCardsTemporarily());
     }
 
     private IEnumerator ShowCardsTemporarily()
     {
-        allCards.ForEach(card => card.FlipUpCard(true));
+        allCards.ForEach(card => card.FlipUpCard(false));
         yield return new WaitForSeconds(2f);
         allCards.ForEach(card => card.FlipDownCard());
     }
@@ -122,6 +122,7 @@ public class GameController : MonoBehaviour
             card.SetMatched();
         }
 
+        SoundManager.Instance.PlayCardMatch();
         OnCardMatch?.Invoke();
 
         if (allCards.All(card => card.IsMatched()))
@@ -137,6 +138,7 @@ public class GameController : MonoBehaviour
             card.FlipDownCard();
         }
 
+        SoundManager.Instance.PlayCardMiss();
         OnCardMiss?.Invoke();
     }
 
@@ -184,8 +186,7 @@ public class GameController : MonoBehaviour
             {
                 newCard.FlipUpCard();
             }
-
-            newCard.CardFlipped += OnCardFlipped;
+            newCard.OnCardFlipped += OnCardFlipped;
         }
     }
 }

@@ -40,6 +40,7 @@ public class CardGridCreator : MonoBehaviour
         }
     }
 
+    // Creates a card grid based on saved game data
     public void CreateCardGrid(int columns, Sprite[] cardFrontSprites, List<CardData> cardDataList, ref List<Card> allCards)
     {
         cardGrid.constraintCount = columns;
@@ -53,6 +54,7 @@ public class CardGridCreator : MonoBehaviour
             var cardData = cardDataList[i];
             newCard.Initialize(cardData.id, cardFrontSprites[cardData.id]);
 
+            // Restore the card's state (matched or flipped)
             if (cardData.isMatched)
             {
                 newCard.SetMatched();

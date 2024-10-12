@@ -5,6 +5,7 @@ public static class ListExtensions
 {
     private static Random rng = new Random();
 
+    // Fisher-Yates shuffle algorithm
     public static void Shuffle<T>(this IList<T> list)
     {
         int n = list.Count;
@@ -32,10 +33,11 @@ public static class ListExtensions
 
         int pairs = totalItems / 2;
 
+        // Generate paired IDs
         for (int i = 0; i < pairs; i++)
         {
-            list.Add(i); // pair 1
-            list.Add(i); // pair 2
+            list.Add(i);
+            list.Add(i);
         }
 
         list.Shuffle();

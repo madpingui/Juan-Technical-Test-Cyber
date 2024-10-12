@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// ScriptableObject for configuring different difficulties of the card game
+/// </summary>
 [CreateAssetMenu(fileName = "NewCardGameConfig", menuName = "Card Game/Config")]
 public class CardGameConfig : ScriptableObject
 {

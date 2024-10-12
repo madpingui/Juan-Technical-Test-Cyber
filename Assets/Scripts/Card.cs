@@ -21,7 +21,7 @@ public class Card : MonoBehaviour
     public void FlipUpCard(bool triggerEvent = true)
     {
         if (isMatched || isFlipped) return;
-        flipAnimator.PlayFlip(false, triggerEvent ? () => OnCardFlipped?.Invoke(this) : null);
+        flipAnimator.PlayFlip(false, triggerEvent ? () => OnCardFlipped?.Invoke(this) : null); // Flip the card and optionally trigger the OnCardFlipped event
         isFlipped = true;
         SoundManager.Instance.PlayCardFlip();
     }
@@ -37,6 +37,7 @@ public class Card : MonoBehaviour
         isMatched = true;
         isFlipped = true;
 
+        // Ensure the card is visually flipped up and play the match animation
         flipAnimator.EnsureFlippedUp();
         flipAnimator.PlayMatch();
     }

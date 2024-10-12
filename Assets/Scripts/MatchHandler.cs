@@ -6,6 +6,7 @@ public class MatchHandler : MonoBehaviour
 {
     private List<Card> currentMatchCheck = new List<Card>();
 
+    // Events to notify other components about cards results
     public static event Action OnCardMatch;
     public static event Action OnCardMiss;
 
@@ -15,6 +16,7 @@ public class MatchHandler : MonoBehaviour
 
         currentMatchCheck.Add(card);
 
+        // Check for a match when two cards are flipped
         if (currentMatchCheck.Count == 2)
         {
             CheckMatch();
@@ -53,5 +55,6 @@ public class MatchHandler : MonoBehaviour
         OnCardMiss?.Invoke();
     }
 
+    // Clears the current match check list
     public void Clear() => currentMatchCheck.Clear();
 }

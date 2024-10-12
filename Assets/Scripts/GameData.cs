@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+// Represents the serializable game state
 [Serializable]
 public class GameData
 {
@@ -11,6 +12,7 @@ public class GameData
     public List<CardData> cardStates;
 }
 
+// Represents the state of an individual card
 [Serializable]
 public class CardData
 {
@@ -19,6 +21,7 @@ public class CardData
     public bool isMatched;
 }
 
+// Pairs a game difficulty with its corresponding configuration
 [Serializable]
 public class DifficultyConfigPair
 {

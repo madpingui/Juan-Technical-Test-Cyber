@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// Singleton class for managing game sounds
 public class SoundManager : MonoBehaviour
 {
     [SerializeField] private AudioSource audioSource;

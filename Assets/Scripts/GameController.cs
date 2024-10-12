@@ -14,13 +14,14 @@ public class GameController : MonoBehaviour
     private List<Card> allCards = new List<Card>();
     private GameDifficulty chosenDifficulty;
 
+    // Events to notify other components about game state changes
     public static event Action OnMatchStarted;
     public static event Action OnMatchLoaded;
     public static event Action OnMatchFinished;
 
     private void Awake()
     {
-        // Initialize the dictionary from the list of pairs
+        // Initialize the dictionary from the list of difficulty-config pairs
         difficultyConfigs = difficultyConfigPairs.ToDictionary(pair => pair.difficulty, pair => pair.config);       
         PlayButton.OnPlayButtonClicked += StartNewGame;
         MatchHandler.OnCardMatch += CheckForEndGame;
@@ -62,7 +63,7 @@ public class GameController : MonoBehaviour
         allCards.ForEach(card => card.FlipDownCard());
     }
 
-    //Check if all cards are matched if so then finish the game.
+    // Check if all cards are matched, if so, finish the game
     private void CheckForEndGame()
     {
         if (allCards.All(card => card.IsMatched()))
@@ -71,6 +72,7 @@ public class GameController : MonoBehaviour
         }
     }
 
+    // Prepare game data for saving
     public GameData GetGameData(int turns, int score, int combo)
     {
         return new GameData
@@ -88,6 +90,7 @@ public class GameController : MonoBehaviour
         };
     }
 
+    // Load a saved game
     public void LoadGameData(GameData data)
     {
         StopAllCoroutines();

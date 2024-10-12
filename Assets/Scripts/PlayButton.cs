@@ -14,6 +14,8 @@ public class PlayButton : MonoBehaviour
     {
         button = GetComponent<Button>();
         button.onClick.AddListener(Play);
+
+        // Subscribe to game state events to manage button interactability
         GameController.OnMatchStarted += DisableButton;
         GameController.OnMatchLoaded += DisableButton;
         GameController.OnMatchFinished += EnableButton;
@@ -21,6 +23,7 @@ public class PlayButton : MonoBehaviour
 
     private void OnDestroy()
     {
+        // Unsubscribe from events to prevent memory leaks
         GameController.OnMatchStarted -= DisableButton;
         GameController.OnMatchLoaded -= DisableButton;
         GameController.OnMatchFinished -= EnableButton;

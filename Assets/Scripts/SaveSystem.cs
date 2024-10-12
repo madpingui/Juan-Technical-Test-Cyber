@@ -15,9 +15,13 @@ public class SaveSystem : MonoBehaviour
     private void Awake()
     {
         savePath = Path.Combine(Application.persistentDataPath, saveFile);
+
+        // Subscribe to game state events to manage button interactability
         GameController.OnMatchStarted += MatchStarted;
         GameController.OnMatchLoaded += MatchStarted;
         GameController.OnMatchFinished += MatchFinished;
+
+        // Enable load button if a save file exists
         if (File.Exists(savePath))
             loadButton.interactable = true;
     }
@@ -34,7 +38,7 @@ public class SaveSystem : MonoBehaviour
 
 #if UNITY_EDITOR
     [ContextMenu("Delete Save File")]
-    public void DeleteFileTesting() => File.Delete(savePath); //Method for testing
+    public void DeleteFileTesting() => File.Delete(savePath); // Method for testing: deletes the save file
 #endif
 
     public void OnSaveButtonClicked()
@@ -56,6 +60,7 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
+    // Serializes and saves the game data to a JSON file
     private void SaveGame(GameData gameData)
     {
         string json = JsonUtility.ToJson(gameData, true);
@@ -63,6 +68,7 @@ public class SaveSystem : MonoBehaviour
         Debug.Log("Game saved!");
     }
 
+    // Loads and deserializes the game data from a JSON file
     private GameData LoadGame()
     {
         if (File.Exists(savePath))

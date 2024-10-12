@@ -54,6 +54,7 @@ public class ScoreManager : MonoBehaviour
         GameController.OnMatchStarted -= ResetScores;
     }
 
+    // Reset all scores when a new match starts
     private void ResetScores()
     {
         Score = 0;
@@ -61,6 +62,7 @@ public class ScoreManager : MonoBehaviour
         Turns = 0;
     }
 
+    // Handle successful card match
     private void OnMatch()
     {
         Score++; // Increment score for every match
@@ -68,12 +70,14 @@ public class ScoreManager : MonoBehaviour
         Turns++;
     }
 
+    // Handle card mismatch
     private void OnMiss()
     {
         Combo = 0; // Reset combo on a miss
         Turns++;
     }
 
+    // Update UI text elements
     private void SetScore(int score) => scoreText.text = $"Score: {score}";
     private void SetCombo(int combo) => comboText.text = $"Combo x{combo}";
     private void SetTurns(int turns) => turnsText.text = $"Turns: {turns}";

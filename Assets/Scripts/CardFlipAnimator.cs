@@ -23,7 +23,7 @@ public class CardFlipAnimator : MonoBehaviour
         cardFigureImage.sprite = cardFigure;
     }
 
-    //If we load a card that is already matched we want to make sure we already have setted up the flipped graphics.
+    // Ensures the card is visually flipped up (used for already matched cards)
     public void EnsureFlippedUp()
     {
         ((Image)cardBackground.targetGraphic).sprite = frontSprite;
@@ -47,7 +47,7 @@ public class CardFlipAnimator : MonoBehaviour
             yield return null;
         }
 
-        // Change sprite at 90 degrees
+        // Change sprite at 90 degrees (midpoint of the flip)
         ((Image)cardBackground.targetGraphic).sprite = isFlipped ? backSprite : frontSprite;
         cardFigureImage.gameObject.SetActive(!isFlipped);
 
@@ -77,7 +77,7 @@ public class CardFlipAnimator : MonoBehaviour
         float elapsedTime = 0f;
         float animationDuration = scaleCurve[scaleCurve.length - 1].time;
 
-        // Use the curve to control the scaling
+        // Use the curve to control the scaling animation
         while (elapsedTime < animationDuration)
         {
             float progress = elapsedTime / animationDuration;

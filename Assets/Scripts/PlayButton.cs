@@ -15,12 +15,14 @@ public class PlayButton : MonoBehaviour
         button = GetComponent<Button>();
         button.onClick.AddListener(Play);
         GameController.OnMatchStarted += DisableButton;
+        GameController.OnMatchLoaded += DisableButton;
         GameController.OnMatchFinished += EnableButton;
     }
 
     private void OnDestroy()
     {
         GameController.OnMatchStarted -= DisableButton;
+        GameController.OnMatchLoaded -= DisableButton;
         GameController.OnMatchFinished -= EnableButton;
     }
 

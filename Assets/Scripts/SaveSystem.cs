@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SaveSystem : MonoBehaviour
 {
@@ -8,20 +9,61 @@ public class SaveSystem : MonoBehaviour
 
     [SerializeField] private GameController gameController;
     [SerializeField] private ScoreManager scoreManager;
+    [SerializeField] private Button loadButton;
+    [SerializeField] private Button saveButton;
 
-    private void Start()
+    private void Awake()
     {
         savePath = Path.Combine(Application.persistentDataPath, saveFile);
+        GameController.OnMatchStarted += MatchStarted;
+        GameController.OnMatchLoaded += MatchStarted;
+        GameController.OnMatchFinished += MatchFinished;
+        if (File.Exists(savePath))
+            loadButton.interactable = true;
     }
 
-    public void SaveGame(GameData gameData)
+    private void OnDestroy()
+    {
+        GameController.OnMatchStarted -= MatchStarted;
+        GameController.OnMatchLoaded -= MatchStarted;
+        GameController.OnMatchFinished -= MatchFinished;
+    }
+
+    private void MatchStarted() => saveButton.interactable = true;
+    private void MatchFinished() => saveButton.interactable = false;
+
+#if UNITY_EDITOR
+    [ContextMenu("Delete Save File")]
+    public void DeleteFileTesting() => File.Delete(savePath); //Method for testing
+#endif
+
+    public void OnSaveButtonClicked()
+    {
+        GameData data = gameController.GetGameData(scoreManager.Turns, scoreManager.Score, scoreManager.Combo);
+        SaveGame(data);
+        loadButton.interactable = true;
+    }
+
+    public void OnLoadButtonClicked()
+    {
+        GameData data = LoadGame();
+        if (data != null)
+        {
+            scoreManager.Turns = data.turns;
+            scoreManager.Score = data.score;
+            scoreManager.Combo = data.combo;
+            gameController.LoadGameData(data);
+        }
+    }
+
+    private void SaveGame(GameData gameData)
     {
         string json = JsonUtility.ToJson(gameData, true);
         File.WriteAllText(savePath, json);
         Debug.Log("Game saved!");
     }
 
-    public GameData LoadGame()
+    private GameData LoadGame()
     {
         if (File.Exists(savePath))
         {
@@ -32,23 +74,6 @@ public class SaveSystem : MonoBehaviour
         }
         Debug.LogError("No save file found!");
         return null;
-    }
-
-    public void OnSaveButtonClicked()
-    {
-        GameData data = gameController.GetGameData(scoreManager.Score, scoreManager.Combo);
-        SaveGame(data);
-    }
-
-    public void OnLoadButtonClicked()
-    {
-        GameData data = LoadGame();
-        if (data != null)
-        {
-            scoreManager.Score = data.score;
-            scoreManager.Combo = data.combo;
-            gameController.LoadGameData(data);
-        }
     }
 }
 

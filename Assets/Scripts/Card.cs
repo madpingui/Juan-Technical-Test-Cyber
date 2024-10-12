@@ -29,8 +29,7 @@ public class Card : MonoBehaviour
     public void FlipDownCard()
     {
         if (isMatched) return;
-        flipAnimator.PlayFlip(true);
-        isFlipped = false;
+        flipAnimator.PlayFlip(true, () => isFlipped = false);
     }
 
     public void SetMatched()

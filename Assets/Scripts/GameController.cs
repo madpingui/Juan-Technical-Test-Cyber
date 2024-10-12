@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     private GameDifficulty chosenDifficulty;
 
     public static event Action OnMatchStarted;
+    public static event Action OnMatchLoaded;
     public static event Action OnMatchFinished;
 
     private void Awake()
@@ -70,10 +71,11 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public GameData GetGameData(int score, int combo)
+    public GameData GetGameData(int turns, int score, int combo)
     {
         return new GameData
         {
+            turns = turns,
             score = score,
             combo = combo,
             chosenDifficulty = (int)chosenDifficulty,
@@ -88,8 +90,10 @@ public class GameController : MonoBehaviour
 
     public void LoadGameData(GameData data)
     {
+        StopAllCoroutines();
         ClearExistingCards();
         var gameConfig = difficultyConfigs[(GameDifficulty)data.chosenDifficulty];
         cardGridCreator.CreateCardGrid(gameConfig.columns, gameConfig.cardFrontSprites, data.cardStates, ref allCards);
+        OnMatchLoaded?.Invoke();
     }
 }

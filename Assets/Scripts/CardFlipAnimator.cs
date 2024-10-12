@@ -65,10 +65,7 @@ public class CardFlipAnimator : MonoBehaviour
         isFlipping = false;
 
         // Mark the animation as completed
-        if (!isFlipped)
-        {
-            onComplete?.Invoke();
-        }
+        onComplete?.Invoke();
     }
 
     [SerializeField] private AnimationCurve scaleCurve;

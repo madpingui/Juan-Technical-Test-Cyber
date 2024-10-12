@@ -30,15 +30,15 @@ public class ScoreManager : MonoBehaviour
 
     private void Start()
     {
-        GameController.OnCardMatch += OnMatch;
-        GameController.OnCardMiss += OnMiss;
+        MatchHandler.OnCardMatch += OnMatch;
+        MatchHandler.OnCardMiss += OnMiss;
         GameController.OnMatchStarted += ResetScores;
     }
 
     private void OnDestroy()
     {
-        GameController.OnCardMatch -= OnMatch;
-        GameController.OnCardMiss -= OnMiss;
+        MatchHandler.OnCardMatch -= OnMatch;
+        MatchHandler.OnCardMiss -= OnMiss;
         GameController.OnMatchStarted -= ResetScores;
     }
 

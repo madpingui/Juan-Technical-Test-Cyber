@@ -253,19 +253,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 191322708}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 191322710}
-        m_TargetAssemblyTypeName: PlayButton, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &191322708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -536,19 +524,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 364393300}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 364393302}
-        m_TargetAssemblyTypeName: PlayButton, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &364393300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -610,6 +586,8 @@ GameObject:
   m_Component:
   - component: {fileID: 428590762}
   - component: {fileID: 428590761}
+  - component: {fileID: 428590763}
+  - component: {fileID: 428590764}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -629,8 +607,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d2645b6cf6ee984ba92bb3e6303f619, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardPrefab: {fileID: 4320685549697946280, guid: 0551926a2753de84cbccba42f2c104f5, type: 3}
-  cardGrid: {fileID: 706815140}
   difficultyConfigPairs:
   - difficulty: 0
     config: {fileID: 11400000, guid: c24d9b9b1fd69c243ac113ce23609eb4, type: 2}
@@ -638,6 +614,8 @@ MonoBehaviour:
     config: {fileID: 11400000, guid: 489fa61bdd0a2ec4fb8bb208a0fa1fbc, type: 2}
   - difficulty: 2
     config: {fileID: 11400000, guid: 6b375afd7eed4e946bb7e072bfe844f9, type: 2}
+  matchHandler: {fileID: 428590763}
+  cardGridCreator: {fileID: 428590764}
 --- !u!4 &428590762
 Transform:
   m_ObjectHideFlags: 0
@@ -653,6 +631,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &428590763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428590760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5921165ab852bbc40a508d0611b31450, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &428590764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428590760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf44d2db9bd87434dbac38fe63fad795, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardPrefab: {fileID: 4320685549697946280, guid: 0551926a2753de84cbccba42f2c104f5, type: 3}
+  cardGrid: {fileID: 706815140}
 --- !u!1 &449192250
 GameObject:
   m_ObjectHideFlags: 0
@@ -897,19 +901,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 546436735}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 546436737}
-        m_TargetAssemblyTypeName: PlayButton, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &546436735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1379,7 +1371,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 549759241}
         m_TargetAssemblyTypeName: SaveSystem, Assembly-CSharp
         m_MethodName: OnSaveButtonClicked
         m_Mode: 1
@@ -2374,7 +2366,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 549759241}
         m_TargetAssemblyTypeName: SaveSystem, Assembly-CSharp
         m_MethodName: OnLoadButtonClicked
         m_Mode: 1

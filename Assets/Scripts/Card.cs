@@ -10,7 +10,7 @@ public class Card : MonoBehaviour
     private bool isMatched = false;
 
     public int Id { get; private set; }
-    public event Action<Card> OnCardFlipped;
+    public static event Action<Card> OnCardFlipped;
 
     public void Initialize(int id, Sprite figure)
     {

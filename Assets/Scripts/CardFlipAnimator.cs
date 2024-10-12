@@ -23,7 +23,7 @@ public class CardFlipAnimator : MonoBehaviour
         cardFigureImage.sprite = cardFigure;
     }
 
-    //If we load a card that is already matched we want to make sure we already have setted up the fliped graphics.
+    //If we load a card that is already matched we want to make sure we already have setted up the flipped graphics.
     public void EnsureFlippedUp()
     {
         ((Image)cardBackground.targetGraphic).sprite = frontSprite;

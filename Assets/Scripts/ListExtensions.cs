@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public static class ListExtensions
 {
-    private static Random rng = new Random(); // Random number generator
+    private static Random rng = new Random();
 
     public static void Shuffle<T>(this IList<T> list)
     {

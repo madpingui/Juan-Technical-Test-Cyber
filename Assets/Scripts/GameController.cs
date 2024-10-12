@@ -3,43 +3,62 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Assertions;
 using System;
-
-[Serializable]
-public enum GameDifficulty
-{
-    Easy,
-    Medium,
-    Hard
-}
+using System.Linq;
 
 public class GameController : MonoBehaviour
 {
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private GridLayoutGroup cardGrid;
-    [SerializeField] private List<CardGameConfig> gameConfigs;
+    [SerializeField] private List<DifficultyConfigPair> difficultyConfigPairs;
 
-    private List<Card> flippedCards = new List<Card>();
+    private Dictionary<GameDifficulty, CardGameConfig> difficultyConfigs;
+    private List<Card> currentMatchCheck = new List<Card>();
     private List<Card> allCards = new List<Card>();
     private GameDifficulty chosenDifficulty;
 
-    public event Action OnMatchStarted;
-    public event Action OnCardMatch;
-    public event Action OnCardMiss;
+    public static event Action OnMatchStarted;
+    public static event Action OnMatchFinished;
+    public static event Action OnCardMatch;
+    public static event Action OnCardMiss;
 
-    public void PlayGame(GameDifficulty difficulty)
+    private void Awake()
+    {
+        PlayButton.OnPlayButtonClicked += StartNewGame;
+
+        // Initialize the dictionary from the list of pairs
+        difficultyConfigs = new Dictionary<GameDifficulty, CardGameConfig>();
+
+        foreach (var pair in difficultyConfigPairs)
+        {
+            if (!difficultyConfigs.ContainsKey(pair.difficulty))
+            {
+                difficultyConfigs.Add(pair.difficulty, pair.config);
+            }
+        }
+    }
+
+    private void StartNewGame(GameDifficulty difficulty)
+    {
+        ClearExistingCards();
+        SetupNewGame(difficulty);
+        OnMatchStarted?.Invoke();
+    }
+
+    private void ClearExistingCards()
     {
         foreach (Transform item in cardGrid.transform)
         {
             Destroy(item.gameObject);
         }
-
         allCards.Clear();
-        flippedCards.Clear();
+        currentMatchCheck.Clear();
+    }
 
+    private void SetupNewGame(GameDifficulty difficulty)
+    {
         chosenDifficulty = difficulty;
-        var gameConfig = gameConfigs[(int)chosenDifficulty];
+        var gameConfig = difficultyConfigs[chosenDifficulty];
         CreateCardGrid(gameConfig.rows, gameConfig.columns, gameConfig.cardFrontSprites);
-        OnMatchStarted?.Invoke();
     }
 
     private void CreateCardGrid(int rows, int columns, Sprite[] cardFrontSprites, List<int> cardIds = null)
@@ -91,11 +110,11 @@ public class GameController : MonoBehaviour
 
     private void OnCardFlipped(Card card)
     {
-        if (flippedCards.Contains(card)) return;
+        if (currentMatchCheck.Contains(card)) return;
 
-        flippedCards.Add(card);
+        currentMatchCheck.Add(card);
 
-        if (flippedCards.Count == 2)
+        if (currentMatchCheck.Count == 2)
         {
             CheckMatch();
         }
@@ -103,26 +122,30 @@ public class GameController : MonoBehaviour
 
     private void CheckMatch()
     {
-        if (flippedCards[0].Id == flippedCards[1].Id)
+        if (currentMatchCheck[0].Id == currentMatchCheck[1].Id)
         {
-            flippedCards[0].SetMatched();
-            flippedCards[1].SetMatched();
+            currentMatchCheck[0].SetMatched();
+            currentMatchCheck[1].SetMatched();
 
             OnCardMatch?.Invoke();
+
+            //Check if all cards are matched
+            if(allCards.All(card => card.IsMatched()))
+                OnMatchFinished?.Invoke();
 
             //play match sound
         }
         else
         {
-            flippedCards[0].ResetCard();
-            flippedCards[1].ResetCard();
+            currentMatchCheck[0].FlipDownCard();
+            currentMatchCheck[1].FlipDownCard();
 
             OnCardMiss?.Invoke();
 
             // Play mismatch sound
         }
 
-        flippedCards.Clear();
+        currentMatchCheck.Clear();
     }
 
     public GameData GetGameData(int score, int combo)
@@ -151,15 +174,9 @@ public class GameController : MonoBehaviour
 
     public void LoadGameData(GameData data)
     {
-        foreach (Transform item in cardGrid.transform)
-        {
-            Destroy(item.gameObject);
-        }
+        ClearExistingCards();
 
-        allCards.Clear();
-        flippedCards.Clear();
-
-        var gameConfig = gameConfigs[(int)data.chosenDifficulty];
+        var gameConfig = difficultyConfigs[(GameDifficulty)data.chosenDifficulty];
         cardGrid.constraintCount = gameConfig.columns;
 
         var cardSprites = gameConfig.cardFrontSprites;
@@ -172,20 +189,17 @@ public class GameController : MonoBehaviour
 
             newCard.Initialize(cardData.id, cardSprites[cardData.id]);
 
-            if (cardData.isFlipped)
-            {
-                newCard.Flip(); // Flip the card to its front
-            }
-
             if (cardData.isMatched)
             {
                 newCard.SetMatched(); // Mark it as matched
+            }
+            else if (cardData.isFlipped)
+            {
+                newCard.FlipUpCard(); // Pass false to avoid triggering the event
             }
 
             newCard.CardFlipped += OnCardFlipped;
         }
     }
-
-
 }
 

@@ -36,7 +36,7 @@ public class SaveSystem : MonoBehaviour
 
     public void OnSaveButtonClicked()
     {
-        GameData data = gameController.GetGameData(scoreManager.GetScore(), scoreManager.GetCombo());
+        GameData data = gameController.GetGameData(scoreManager.Score, scoreManager.Combo);
         SaveGame(data);
     }
 
@@ -45,8 +45,8 @@ public class SaveSystem : MonoBehaviour
         GameData data = LoadGame();
         if (data != null)
         {
-            scoreManager.SetScore(data.score);
-            scoreManager.SetCombo(data.combo);
+            scoreManager.Score = data.score;
+            scoreManager.Combo = data.combo;
             gameController.LoadGameData(data);
         }
     }

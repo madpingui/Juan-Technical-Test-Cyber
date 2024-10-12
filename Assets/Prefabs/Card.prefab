@@ -31,6 +31,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1437987617437063174}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -88,6 +89,7 @@ GameObject:
   - component: {fileID: 9106941916153185166}
   - component: {fileID: -4643976315311839610}
   - component: {fileID: 3965775801190478967}
+  - component: {fileID: 5983628504670733955}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -109,6 +111,7 @@ RectTransform:
   m_Children:
   - {fileID: 1682721139840161958}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -199,7 +202,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3965775801190478967}
         m_TargetAssemblyTypeName: Card, Assembly-CSharp
-        m_MethodName: Flip
+        m_MethodName: FlipUpCard
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -207,7 +210,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &3965775801190478967
 MonoBehaviour:
@@ -221,10 +224,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55e382f758b4dfc46a38b8c4174fe5ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flipAnimator: {fileID: 5983628504670733955}
+--- !u!114 &5983628504670733955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4320685549697946280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 014016f1318a25b4d95aa41305ab73c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   frontSprite: {fileID: 7919194353434859991, guid: b35fcaa46fa9f3e49b71c103f69df698, type: 3}
   backSprite: {fileID: 3286202820649098227, guid: ab07d3905ed943549afe9267580f3dec, type: 3}
   cardFigureImage: {fileID: 916335643483971825}
-  popCurve:
+  scaleCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3

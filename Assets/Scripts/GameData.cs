@@ -17,3 +17,18 @@ public class CardData
     public bool isFlipped;
     public bool isMatched;
 }
+
+[Serializable]
+public class DifficultyConfigPair
+{
+    public GameDifficulty difficulty;
+    public CardGameConfig config;
+}
+
+[Serializable]
+public enum GameDifficulty
+{
+    Easy,
+    Medium,
+    Hard
+}

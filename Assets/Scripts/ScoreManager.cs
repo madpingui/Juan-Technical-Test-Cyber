@@ -3,52 +3,63 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    [SerializeField] private GameController gameController;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI comboText;
 
-    private int score = 0;
-    private int combo = 0;
+    private int score;
+    public int Score
+    {
+        get => score;
+        set
+        {
+            score = value;
+            SetScore(score);
+        }
+    }
+
+    private int combo;
+    public int Combo
+    {
+        get => combo;
+        set
+        {
+            combo = value;
+            SetCombo(combo);
+        }
+    }
 
     private void Start()
     {
-        gameController.OnCardMatch += OnMatch;
-        gameController.OnCardMiss += OnMiss;
-        gameController.OnMatchStarted += ResetScores;
+        GameController.OnCardMatch += OnMatch;
+        GameController.OnCardMiss += OnMiss;
+        GameController.OnMatchStarted += ResetScores;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        gameController.OnCardMatch -= OnMatch;
-        gameController.OnCardMiss -= OnMiss;
-        gameController.OnMatchStarted -= ResetScores;
+        GameController.OnCardMatch -= OnMatch;
+        GameController.OnCardMiss -= OnMiss;
+        GameController.OnMatchStarted -= ResetScores;
     }
 
     private void ResetScores()
     {
-        score = 0;
-        combo = 0;
-        SetScore(score);
-        SetCombo(combo);
+        Score = 0;
+        Combo = 0;
     }
 
     private void OnMatch()
     {
-        score++; // Increment score for every match
-        combo++; // Increase combo for successful matches
-        SetScore(score);
-        SetCombo(combo);
+        Score++; // Increment score for every match
+        Combo++; // Increase combo for successful matches
     }
 
     private void OnMiss()
     {
-        combo = 0; // Reset combo on a miss
-        SetCombo(combo);
+        Combo = 0; // Reset combo on a miss
     }
 
-    public void SetScore(int score) => scoreText.text = $"Score: {score}";
-    public void SetCombo(int combo) => comboText.text = $"Combo x{combo}";
-    public int GetScore() => score;
-    public int GetCombo() => combo;
+    private void SetScore(int score) => scoreText.text = $"Score: {score}";
+    private void SetCombo(int combo) => comboText.text = $"Combo x{combo}";
 }
 
